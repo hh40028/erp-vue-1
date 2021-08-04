@@ -13,11 +13,6 @@ import router from './router';
 import 'vue-easytable/libs/themes-base/index.css';
 
 import {VTable, VPagination} from 'vue-easytable';
-import VideoPlayer from 'vue-video-player';
-
-require('video.js/dist/video-js.css');
-require('vue-video-player/src/custom-theme.css');
-Vue.use(VideoPlayer);
 
 // 注册到全局
 Vue.component(VTable.name, VTable);
