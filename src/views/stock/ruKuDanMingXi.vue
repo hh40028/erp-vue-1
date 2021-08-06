@@ -58,7 +58,7 @@
                 </table>
 
             </div>
-            <div class="text-center">
+            <div class="text-center" v-if="!process">
                 <button class="btn btn-default m-r-10" @click="submit" v-if="!obj.submit">提交入库</button>
                 <button class="btn btn-default m-r-10" v-if="obj.submit">打印</button>
                 <div onclick="history.back()" class="btn btn-default">返回</div>
@@ -70,6 +70,12 @@
 <script>
 import selectCargolocation from '@/components/selectCargolocation.vue';
 export default {
+    props: {
+        process: {
+            type: Boolean,
+            default: false
+        }
+    },
     name: "app",
     data() {
         return {

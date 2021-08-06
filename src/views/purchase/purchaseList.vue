@@ -52,28 +52,32 @@
 
 <script>
 import page from '@/components/page.vue';
+
 export default {
     name: "app",
     data() {
         return {
             columns: [
-                {field: 'serial', title: '序号', width: 50, titleAlign: 'center', columnAlign: 'center', isFrozen: true,isResize:false},
-                {field: 'inbound', title: '入库', width: 80, titleAlign: 'center', columnAlign: 'center', isFrozen: true,isResize:true},
-                {field: 'number', title: '单据号', width: 150, titleAlign: 'center', columnAlign: 'center', isFrozen: true,isResize:true},
-                {field: 'suppliername', title: '供应商', width: 150, titleAlign: 'center', columnAlign: 'center', isFrozen: true,isResize:true},
-                {field: 'deptname', title: '采购部门', width: 150, titleAlign: 'center', columnAlign: 'center', isFrozen: false,isResize:true},
-                {field: 'purchasedate', title: '采购日期', width: 150, titleAlign: 'center', columnAlign: 'center', isFrozen: false,isResize:true},
-                {field: 'managername', title: '经办人', width: 150, titleAlign: 'center', columnAlign: 'center', isFrozen: false,isResize:true},
-                {field: 'amount', title: '采购金额', width: 150, titleAlign: 'center', columnAlign: 'center', isFrozen: false,isResize:true},
-                {field: 'remark', title: '摘要', width: 350, titleAlign: 'left', columnAlign: 'left', isFrozen: false,isResize:true},
+                {field: 'serial', title: '序号', width: 50, titleAlign: 'center', columnAlign: 'center', isFrozen: true, isResize: false},
+                {field: 'inbound', title: '入库', width: 80, titleAlign: 'center', columnAlign: 'center', isFrozen: true, isResize: true},
+                {field: 'number', title: '单据号', width: 150, titleAlign: 'center', columnAlign: 'center', isFrozen: true, isResize: true},
+                {field: 'suppliername', title: '供应商', width: 150, titleAlign: 'center', columnAlign: 'center', isFrozen: true, isResize: true},
+                {field: 'deptname', title: '采购部门', width: 150, titleAlign: 'center', columnAlign: 'center', isFrozen: false, isResize: true},
+                {field: 'purchasedate', title: '采购日期', width: 150, titleAlign: 'center', columnAlign: 'center', isFrozen: false, isResize: true},
+                {field: 'managername', title: '经办人', width: 150, titleAlign: 'center', columnAlign: 'center', isFrozen: false, isResize: true},
+                {field: 'amount', title: '采购金额', width: 150, titleAlign: 'center', columnAlign: 'center', isFrozen: false, isResize: true},
+                {field: 'remark', title: '摘要', width: 350, titleAlign: 'left', columnAlign: 'left', isFrozen: false, isResize: true},
             ],
             list: [],
             filterString: '',
             obj: {},
-            isRedback:false
+            isRedback: false
         }
     },
     created: function () {
+        if (sessionStorage.purchaseRedback) {
+            this.isRedback = sessionStorage.purchaseRedback;
+        }
         this.load();
     },
     components: {
@@ -88,9 +92,9 @@ export default {
                 limit = this.$refs.page.pageSize;
             }
             let vm = this;
-            let url='purchase/getQueryList';
-            if(this.isRedback){
-                url='purchase/getQueryListByRedback';
+            let url = 'purchase/getQueryList';
+            if (this.isRedback) {
+                url = 'purchase/getQueryListByRedback';
             }
             this.$root.getData(url, {
                 limit: limit,
@@ -103,11 +107,14 @@ export default {
                 vm.list = [];
                 data.children.forEach(function (e) {
                     e.serial = ++offset;
-                    if(!isNaN(e.amount)){
-                        e.amount=e.amount.toFixed(2);
+                    if (!isNaN(e.amount)) {
+                        e.amount = e.amount.toFixed(2);
                     }
-                    if(e.enterwarehouse){
-                        e.inbound="完成";
+                    if (e.submit && e.enterwarehouse) {
+                        e.inbound = "完成";
+                    }
+                    if (e.submit && !e.enterwarehouse) {
+                        e.inbound = "提交";
                     }
                     vm.list.push(e);
                 })
@@ -115,13 +122,14 @@ export default {
             })
         },
         selectItem(rowIndex, rowData, column) {
-            this.obj=rowData;
+            this.obj = rowData;
         },
-        add(){
+        add() {
+            sessionStorage.removeItem('purchaseId');
             this.$router.push('purchaseEdit');
         },
-        view(){
-            sessionStorage.purchaseId=this.obj.id;
+        view() {
+            sessionStorage.purchaseId = this.obj.id;
             this.$router.push('purchaseview');
         }
     },

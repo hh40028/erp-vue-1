@@ -103,13 +103,23 @@ export default {
     },
     created: function () {
         this.$set(this.obj, 'purchasedate', this.$root.getCurrDay());
-        this.load();
+        this.loadWarehouses();
+        if(sessionStorage.purchaseId){
+            this.load();
+        }
     },
     components: {
         selectSupplier, selectUser, selectCommodity
     },
     methods: {
         load: function () {
+            let vm = this;
+            this.$root.getData("purchase/getMap", {id: sessionStorage.purchaseId}, function (data) {
+                vm.obj = data.obj;
+                vm.list=data.list;
+            })
+        },
+        loadWarehouses: function () {
             let vm = this;
             this.$root.getData("warehouse/getList", {}, function (data) {
                 vm.warehouses = data;

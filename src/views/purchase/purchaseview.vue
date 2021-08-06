@@ -76,10 +76,14 @@
                     </tfoot>
                 </table>
             </div>
-            <div class="text-center">
-                <button class="btn btn-default m-r-10" v-if="!process" @click="printPDF">打印</button>
-                <button class="btn btn-danger m-r-10" v-if="!obj.redback" @click="redback">删除</button>
-                <router-link to="purchaseList" v-if="!process" class="btn btn-default">返回</router-link>
+            <div class="text-center" v-if="!process">
+                <div class="btn-group">
+                    <button class="btn btn-primary" v-if="!obj.submit" @click="submit">提交入库</button>
+                    <button class="btn btn-danger" v-if="!obj.redback" @click="redback">删除</button>
+                    <button class="btn btn-warning" v-if="!obj.submit" @click="edit">编辑</button>
+                    <button class="btn btn-info" @click="printPDF">打印</button>
+                    <router-link to="purchaseList" class="btn btn-default">返回</router-link>
+                </div>
             </div>
         </div>
         <div class="modal fade" id="viewModal" tabindex="-1" role="dialog" aria-hidden="true">
@@ -100,14 +104,14 @@
 // props.process是该组件作为流程表单组件时注入的值，如果process=true，就按照流程处理页面元素
 // props.purchaseId是组件在流程表单中传入的主键值，非流程中获取sessionStorage.purchaseId
 export default {
-    props:{
-        process:{
-            type:Boolean,
-            default:false
+    props: {
+        process: {
+            type: Boolean,
+            default: false
         },
-        purchaseId:{
-            type:Number,
-            default:0
+        purchaseId: {
+            type: Number,
+            default: 0
         }
     },
     name: "app",
@@ -118,8 +122,8 @@ export default {
         }
     },
     created: function () {
-        if(this.purchaseId===0){
-            this.purchaseId=sessionStorage.purchaseId;
+        if (this.purchaseId === 0) {
+            this.purchaseId = sessionStorage.purchaseId;
         }
         this.load();
     },
@@ -127,10 +131,8 @@ export default {
         load: function () {
             let vm = this;
             this.$root.getData("purchase/getMap", {id: this.purchaseId}, function (data) {
-                vm.obj = data;
-            })
-            this.$root.getData("purchasechild/getList", {purchaseid: this.purchaseId}, function (data) {
-                vm.list = data;
+                vm.obj = data.obj;
+                vm.list = data.list;
             })
         },
         printPDF() {
@@ -154,14 +156,26 @@ export default {
             let vm = this;
             this.$root.confirm('确认吗?', function () {
                 vm.$root.getData("purchase/redback", {id: vm.obj.id}, function (data) {
-                    vm.$set(vm.obj,'redback',data);
-                    if(!vm.process){
+                    vm.$set(vm.obj, 'redback', data);
+                    if (!vm.process) {
                         vm.$router.push('purchaseList');
-                    }else{
-                        vm.$root.alert('操作成功',function (){
+                    } else {
+                        vm.$root.alert('操作成功', function () {
                             vm.$router.push('todoList');
                         });
                     }
+                })
+            })
+        },
+        edit() {
+            sessionStorage.purchaseId = this.obj.id;
+            this.$router.push('purchaseEdit');
+        },
+        submit() {
+            let vm = this;
+            this.$root.confirm('确认吗?', function () {
+                vm.$root.getData("purchase/submit", {id: vm.obj.id}, function (data) {
+                    vm.$router.push('purchaseList');
                 })
             })
         }

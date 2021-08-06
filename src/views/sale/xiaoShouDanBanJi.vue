@@ -56,11 +56,11 @@
                         <td class="text-center">
                             {{ o.unit }}
                         </td>
-                        <td class="text-center">
-                            <input type="number" v-model="o.salecount" class="w-100">
+                        <td class="text-center w120">
+                            <input type="number" v-model="o.salecount" class="w-100" min="0">
                         </td>
-                        <td class="text-center">
-                            <input type="number" v-model="o.saleprice" class="w-100">
+                        <td class="text-center w120">
+                            <input type="number" v-model="o.saleprice" class="w-100" min="0">
                         </td>
                         <td class="text-center">
                             {{ o.salecount * o.saleprice|number2 }}
@@ -111,19 +111,30 @@ export default {
             this.$refs.selectStockCommodity.loadModal();
         },
         selectStockCommodity(obj) {
-            obj.id = null;
-            this.list.push(obj);
+            let flag = false;
+            this.list.forEach(function (e) {
+                if (e.warehouseid === obj.warehouseid && e.cargolocationid === obj.cargolocationid && e.commodityid === obj.commodityid) {
+                    flag = true;
+                }
+            })
+            if (flag) {
+                this.$root.alert('已选商品');
+            } else {
+                obj.id = null;
+                this.list.push(obj);
+            }
         },
         removeItem(index) {
             this.list.splice(index, 1);
         },
         save() {
             let vm = this;
-            this.$root.confirm('确认吗?',function (){
+            this.$root.confirm('确认吗?', function () {
                 vm.$root.getData("sale/save", {
                     obj: JSON.stringify(vm.obj),
                     rows: JSON.stringify(vm.list)
                 }, function (data) {
+                    sessionStorage.saleId = data.id;
                     vm.$router.push('xiaoShouDanMingXi');
                 })
             })

@@ -4,7 +4,7 @@
             <process :taskobj="taskObj"></process>
         </div>
         <div class="col-md-12">
-            <ruKuDanMingXi></ruKuDanMingXi>
+            <ruKuDanMingXi process="true"></ruKuDanMingXi>
         </div>
     </div>
 </template>

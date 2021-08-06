@@ -58,13 +58,13 @@ export default {
         return {
             columns: [
                 {field: 'serial', title: '序号', width: 50, titleAlign: 'center', columnAlign: 'center', isFrozen: true,isResize:false},
-                // {field: 'inbound', title: '入库', width: 80, titleAlign: 'center', columnAlign: 'center', isFrozen: true,isResize:true},
+                {field: 'outboundname', title: '出库', width: 80, titleAlign: 'center', columnAlign: 'center', isFrozen: true,isResize:true},
                 {field: 'number', title: '单据号', width: 150, titleAlign: 'center', columnAlign: 'center', isFrozen: true,isResize:true},
-                {field: 'suppliername', title: '客户', width: 150, titleAlign: 'center', columnAlign: 'center', isFrozen: true,isResize:true},
-                {field: 'deptname', title: '采购部门', width: 150, titleAlign: 'center', columnAlign: 'center', isFrozen: false,isResize:true},
-                {field: 'purchasedate', title: '采购日期', width: 150, titleAlign: 'center', columnAlign: 'center', isFrozen: false,isResize:true},
-                {field: 'managername', title: '经办人', width: 150, titleAlign: 'center', columnAlign: 'center', isFrozen: false,isResize:true},
-                {field: 'amount', title: '采购金额', width: 150, titleAlign: 'center', columnAlign: 'center', isFrozen: false,isResize:true},
+                {field: 'customername', title: '客户', width: 150, titleAlign: 'center', columnAlign: 'center', isFrozen: true,isResize:true},
+                {field: 'deptname', title: '销售部门', width: 150, titleAlign: 'center', columnAlign: 'center', isFrozen: false,isResize:true},
+                {field: 'saledate', title: '销售日期', width: 150, titleAlign: 'center', columnAlign: 'center', isFrozen: false,isResize:true},
+                {field: 'total', title: '销售金额', width: 150, titleAlign: 'center', columnAlign: 'center', isFrozen: false,isResize:true},
+                {field: 'cost', title: '成本金额', width: 150, titleAlign: 'center', columnAlign: 'center', isFrozen: false,isResize:true},
                 {field: 'remark', title: '摘要', width: 350, titleAlign: 'left', columnAlign: 'left', isFrozen: false,isResize:true},
             ],
             list: [],
@@ -103,11 +103,11 @@ export default {
                 vm.list = [];
                 data.children.forEach(function (e) {
                     e.serial = ++offset;
-                    if(!isNaN(e.amount)){
-                        e.amount=e.amount.toFixed(2);
+                    if(!isNaN(e.total)){
+                        e.total=e.total.toFixed(2);
                     }
-                    if(e.enterwarehouse){
-                        e.inbound="完成";
+                    if(e.outbound){
+                        e.outboundname="完成";
                     }
                     vm.list.push(e);
                 })

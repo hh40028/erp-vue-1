@@ -33,7 +33,8 @@ Vue.prototype.loadTaskCount = function () {
             vm.$root.taskCount = data;
         })
     }
-}
+};
+
 new Vue({
     data() {
         return {
@@ -42,7 +43,7 @@ new Vue({
             tag: 'index',
             path: [],
             menus: [],
-            taskCount:0
+            taskCount: 0
 
         }
     },
