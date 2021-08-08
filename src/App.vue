@@ -56,6 +56,7 @@ export default {
     created: function () {
         if (sessionStorage.menu) {
             this.menu = JSON.parse(sessionStorage.menu);
+            this.loadTree();
         }
         this.loadTaskCount();
         setInterval(this.loadTaskCount, 300000);

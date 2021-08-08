@@ -27,6 +27,9 @@ export default {
         }
     },
     created: function () {
+        if(!this.$root.userObj){
+            this.$router.push('login');
+        }
     },
     methods: {
         login() {

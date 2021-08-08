@@ -28,8 +28,10 @@
                         <td class="text-left">{{ obj.usedeposit|number2 }} 元</td>
                     </tr>
                     <tr>
+                        <td class="text-right">编制人</td>
+                        <td class="text-left">{{ obj.username }}</td>
                         <td class="text-right">摘要说明</td>
-                        <td class="text-left" colspan="3">{{ obj.remark }}</td>
+                        <td class="text-left">{{ obj.remark }}</td>
                     </tr>
                     </tbody>
                 </table>
@@ -78,10 +80,10 @@
             </div>
             <div class="text-center" v-if="!process">
                 <div class="btn-group">
-                    <button class="btn btn-primary" v-if="!obj.submit" @click="submit">提交入库</button>
+                    <button class="btn btn-primary" v-if="!obj.redback && !obj.submit" @click="submit">提交入库</button>
                     <button class="btn btn-danger" v-if="!obj.redback" @click="redback">删除</button>
-                    <button class="btn btn-warning" v-if="!obj.submit" @click="edit">编辑</button>
-                    <button class="btn btn-info" @click="printPDF">打印</button>
+                    <button class="btn btn-warning" v-if="!obj.redback && !obj.submit" @click="edit">编辑</button>
+                    <button class="btn btn-info" v-if="!obj.redback" @click="printPDF">打印</button>
                     <router-link to="purchaseList" class="btn btn-default">返回</router-link>
                 </div>
             </div>
@@ -101,33 +103,36 @@
 </template>
 
 <script>
-// props.process是该组件作为流程表单组件时注入的值，如果process=true，就按照流程处理页面元素
-// props.purchaseId是组件在流程表单中传入的主键值，非流程中获取sessionStorage.purchaseId
 export default {
-    props: {
-        process: {
-            type: Boolean,
-            default: false
-        },
-        purchaseId: {
-            type: Number,
-            default: 0
-        }
-    },
     name: "app",
     data() {
         return {
+            process: false,
+            purchaseId: 0,
             obj: {},
             list: []
+        }
+    },
+    computed: {
+        getPurchaseId: function () {
+            return this.purchaseId
         }
     },
     created: function () {
         if (this.purchaseId === 0) {
             this.purchaseId = sessionStorage.purchaseId;
         }
-        this.load();
+        if (this.purchaseId) {
+            this.load();
+        }
     },
     methods: {
+        //流程表单调用组件应调用该方法赋值
+        processInit(process, purchaseId) {
+            this.process = process;
+            this.purchaseId = purchaseId;
+            this.load();
+        },
         load: function () {
             let vm = this;
             this.$root.getData("purchase/getMap", {id: this.purchaseId}, function (data) {

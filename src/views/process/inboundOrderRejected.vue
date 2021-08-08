@@ -4,7 +4,7 @@
             <process :taskobj="taskObj"></process>
         </div>
         <div class="col-md-12">
-            <purchaseview :process="true"></purchaseview>
+            <purchaseview ref="purchaseview"></purchaseview>
         </div>
     </div>
 </template>
@@ -17,7 +17,8 @@ export default {
     name: "app",
     data() {
         return {
-            taskObj: {}
+            taskObj: {},
+            purchaseId:0
         }
     },
     created: function () {
@@ -31,7 +32,7 @@ export default {
         load: function () {
             let vm = this;
             this.$root.getData("inboundorder/getObj", {id: this.taskObj.relationid}, function (data) {
-                sessionStorage.purchaseId=data.relevanceid;
+                vm.$refs.purchaseview.processInit(true,data.relevanceid);
             })
         }
     }

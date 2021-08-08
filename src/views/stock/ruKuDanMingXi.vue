@@ -3,6 +3,8 @@
         <div class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
+                    <div style="position: absolute;top:30px;right:30px" v-if="!obj.redback && obj.submit"><img src="../../assets/images/ruku.png" class="w100"></div>
+                    <div style="position: absolute;top:30px;right:30px" v-if="obj.redback"><img src="../../assets/images/delete.png" class="w100"></div>
                     <h3 class="panel-title">入库单信息</h3>
                 </div>
                 <table class="table table-bordered">
@@ -48,18 +50,17 @@
                         <td class="text-center">{{ o.bigpackage ? o.bigunit : o.unit }}</td>
                         <td class="text-center">{{o.incount|number2}}</td>
                         <td class="text-center">{{o.inprice|number2}}</td>
-                        <td class="text-center" style="width:150px"  v-if="!obj.submit">
+                        <td class="text-center" style="width:150px"  v-if="!obj.submit && process">
                             <selectCargolocation :warehouseid="o.warehouseid" :name="o.cargolocationnumber" @selectObj="selectObj"></selectCargolocation>
                         </td>
-                        <td class="text-center" style="width:150px"  v-if="obj.submit">{{o.cargolocationnumber}}
-                        </td>
+                        <td class="text-center" style="width:150px"  v-if="obj.submit">{{o.cargolocationnumber}}</td>
                     </tr>
                     </tbody>
                 </table>
 
             </div>
             <div class="text-center" v-if="!process">
-                <button class="btn btn-default m-r-10" @click="submit" v-if="!obj.submit">提交入库</button>
+<!--                <button class="btn btn-default m-r-10" @click="submit" v-if="!obj.submit">提交入库</button>-->
                 <button class="btn btn-default m-r-10" v-if="obj.submit">打印</button>
                 <div onclick="history.back()" class="btn btn-default">返回</div>
             </div>
@@ -107,7 +108,7 @@ export default {
         },
         selectObj(obj){
             this.$set(this.hwObj,'cargolocationid',obj.id);
-            this.$set(this.hwObj,'cargolocationnumber',obj.number);
+            this.$set(this.hwObj,'cargolocationnumber',obj.text);
             let vm = this;
             this.$root.getData("inboundorderchild/save", this.hwObj, function (data) {
 

@@ -17,7 +17,7 @@
                                 <tr>
                                     <th class="text-center w50">序号</th>
                                     <th class="text-center">编号</th>
-                                    <th class="text-center">名称</th>
+                                    <th class="text-center">备注</th>
                                     <th class="text-center w50"><a class="c-blue" @click="add">新建</a></th>
                                 </tr>
                                 </thead>
@@ -48,7 +48,7 @@
                             <input type="text" v-model="selectObj.number" class="form-control">
                         </div>
                         <div class="form-group">
-                            <label>货位名称</label>
+                            <label>货位备注</label>
                             <input type="text" v-model="selectObj.name" class="form-control">
                         </div>
                     </div>
