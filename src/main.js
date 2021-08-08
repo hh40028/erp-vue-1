@@ -34,7 +34,7 @@ Vue.prototype.loadTaskCount = function () {
         })
     }
 };
-
+Vue.prototype.bus = new Vue;
 new Vue({
     data() {
         return {
@@ -65,8 +65,8 @@ new Vue({
         },
         //远程数据访问
         getData: function (action, obj, fun) {
+            this.bus.$emit('loading', true);
             let vm = this;
-            let time = new Date().getTime();
             $.ajax({
                 url: this.basePath + action,
                 type: "post",
@@ -84,11 +84,13 @@ new Vue({
                         console.log("action:" + action);
                         vm.handleErrInfo(data);
                     }
+                    vm.bus.$emit('loading', false);
                 },
                 error: function (xhr) {
                     if (xhr.status === 404) {
                         vm.alert("404错误：" + action);
                     }
+                    vm.bus.$emit('loading', false);
                 }
             });
         },

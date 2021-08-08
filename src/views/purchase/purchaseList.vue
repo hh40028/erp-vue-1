@@ -76,9 +76,6 @@ export default {
         }
     },
     created: function () {
-        if (sessionStorage.purchaseRedback) {
-            this.isRedback = sessionStorage.purchaseRedback;
-        }
         this.load();
     },
     components: {

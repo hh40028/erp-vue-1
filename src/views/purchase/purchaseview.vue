@@ -1,4 +1,4 @@
-<template>
+<template v-cloak>
     <div class="row">
         <div class="col-md-12">
             <div style="position: absolute;top:30px;right:30px" v-if="!obj.redback && obj.enterwarehouse"><img src="../../assets/images/ruku.png" class="w100"></div>
@@ -78,7 +78,7 @@
                     </tfoot>
                 </table>
             </div>
-            <div class="text-center" v-if="!process">
+            <div class="text-center" v-if="!process && showBtns">
                 <div class="btn-group">
                     <button class="btn btn-primary" v-if="!obj.redback && !obj.submit" @click="submit">提交入库</button>
                     <button class="btn btn-danger" v-if="!obj.redback" @click="redback">删除</button>
@@ -110,7 +110,8 @@ export default {
             process: false,
             purchaseId: 0,
             obj: {},
-            list: []
+            list: [],
+            showBtns:false
         }
     },
     computed: {
@@ -138,6 +139,7 @@ export default {
             this.$root.getData("purchase/getMap", {id: this.purchaseId}, function (data) {
                 vm.obj = data.obj;
                 vm.list = data.list;
+                vm.showBtns=true;
             })
         },
         printPDF() {
