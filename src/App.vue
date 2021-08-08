@@ -56,7 +56,7 @@ export default {
             taskCount: 0
         }
     },
-    components:{
+    components: {
         loading
     },
     created: function () {
@@ -99,7 +99,8 @@ export default {
 }
 </script>
 
-<style>.sun-loading {
+<style>
+.sun-loading {
     width: 45px;
     height: 45px;
     display: block;
@@ -112,6 +113,16 @@ export default {
     left: 0;
     bottom: 0;
     right: 0;
+}
+.mask{
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.01);
 }
 
 </style>
