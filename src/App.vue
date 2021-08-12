@@ -10,36 +10,67 @@
                         <span class="icon-bar"></span>
                     </div>
                     <a class="navbar-brand" href="#">ERP管理</a>
-
-
                 </div>
 
                 <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav m-l-30">
                         <li v-for="menu in $root.menus" :key="menu.id" :class="{'active':$root.tag===menu.id}"><a @click="selectMenu(menu)">{{ menu.text }} <span class="sr-only">(current)</span></a></li>
                     </ul>
-
                     <ul class="nav navbar-nav navbar-right m-r-10">
                         <li>
-                            <router-link to="todoList">待办
-                                <span class="badge" v-show="$root.taskCount>0">{{ $root.taskCount }}</span>
+                            <router-link to="todoList" :class="{'cake':$root.taskCount>0}">待办
+                                <span class="badge bgm-red c-white" v-show="$root.taskCount>0">{{ $root.taskCount }}</span>
                             </router-link>
                         </li>
                         <li>
                             <router-link to="menuSet">菜单</router-link>
                         </li>
-                        <li><a @click="logout" v-if="$root.userObj">注销</a></li>
+                        <li class="dropdown">
+                            <a href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle">
+                                {{ $root.userObj.username }} <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#/personalSettings" class="">设置</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a @click="logout" v-if="$root.userObj">注销</a></li>
+                            </ul>
+                        </li>
                     </ul>
                 </div>
             </nav>
             <div class="row">
-                <div class="col-md-2" style="margin-top: 70px;margin-bottom: 50px">
-                    <div id="treeviewMenu"></div>
-                </div>
-                <div class="col-md-10" style="margin-top: 70px;margin-bottom: 50px">
+                <div class="col-md-12" style="margin-top: 70px;margin-bottom: 50px">
                     <router-view></router-view>
-
                     <loading></loading>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="menuModal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-lg" style="width: 80%">
+                <div class="modal-content" style="background-color: #fff">
+                    <div class="modal-body menu-modal">
+                        <div class="row p-15">
+                            <div class="pull-right">
+                                <a href="">
+                                    <img src="./assets/images/icons8-delete_sign.png" data-dismiss="modal" class="w30">
+                                </a>
+                            </div>
+                            <div class="col-md-4 col-md-offset-4 col-sm-8 col-sm-offset-2 col-xs-10 col-xs-offset-1 text-center">
+                                <input type="text" v-model="filterMenu" placeholder="搜索功能" class="form-control text-center">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="row p-b-15">
+                            <div v-for="menu in menuList" class="menu-icon col-md-2 col-sm-3 col-xs-4 text-center p-b-15 p-t-15" v-show="!menu.hide">
+                                <a style="text-decoration:none;cursor:pointer" @click="goPage(menu.url)">
+                                    <img :src="menu.iconBase64" class="tubiao1"><br>
+                                    <span class="c-black">{{ menu.text }}</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -47,7 +78,6 @@
 </template>
 
 <script>
-import './assets/js/bootstrap-treeview';
 import loading from '@/components/loading.vue';
 
 export default {
@@ -55,32 +85,19 @@ export default {
     data() {
         return {
             menu: {},
-            taskCount: 0
+            taskCount: 0,
+            menuList: [],
+            filterMenu: ''
         }
     },
     components: {
         loading
     },
     created: function () {
-        if (sessionStorage.menu) {
-            this.menu = JSON.parse(sessionStorage.menu);
-            this.loadTree();
-        }
         this.loadTaskCount();
         setInterval(this.loadTaskCount, 300000);
     },
     methods: {
-        loadTree() {
-            let vm = this;
-            $('#treeviewMenu').treeview({
-                color: "#000000",
-                levels: 1,
-                data: this.menu.nodes,
-                onNodeSelected: function (event, node) {
-                    vm.$router.push(node.url);
-                }
-            });
-        },
         logout() {
             this.$root.userObj = undefined;
             localStorage.clear();
@@ -88,16 +105,43 @@ export default {
             this.$router.push('login');
         },
         selectMenu(menu) {
-            this.menu = menu;
-            sessionStorage.menu = JSON.stringify(menu);
-            this.$root.tag = menu.id;
-            if (!!menu.url) {
+            let vm = this;
+            if (menu.nodes) {
+                $('#menuModal').modal('show');
+            }
+            this.menuList = [];
+            if (menu.nodes) {
+                menu.nodes.forEach(function (n) {
+                    let icon = '';
+                    if (n.icon) {
+                        icon = require('./assets/images/' + n.icon);
+                    }
+                    vm.menuList.push({text: n.text, url: n.url, iconBase64: icon, hide: false});
+                })
+            }
+            if (menu.url) {
                 this.$router.push(menu.url);
             }
-            this.loadTree();
+            this.$root.tag = menu.id;
         },
-
-    }
+        goPage(url) {
+            $('#menuModal').modal('hide');
+            this.$router.push(url);
+        }
+    },
+    watch: {
+        filterMenu: {
+            handler() {
+                let vm = this;
+                if (this.timeout) clearTimeout(this.timeout);
+                this.timeout = setTimeout(function () {
+                    vm.menuList.forEach(function (e) {
+                        e.hide = e.text.indexOf(vm.filterMenu) < 0;
+                    })
+                }, 500);
+            }
+        }
+    },
 }
 </script>
 
@@ -116,7 +160,8 @@ export default {
     bottom: 0;
     right: 0;
 }
-.mask{
+
+.mask {
     position: fixed;
     top: 0;
     left: 0;
@@ -124,7 +169,23 @@ export default {
     right: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.01);
+    background: rgba(0, 0, 0, 0.01);
 }
 
+.tubiao1 {
+    width: 40%;
+    height: 40%;
+}
+
+.cake {
+    color: red;
+    animation: move 3s 0s infinite;
+    -webkit-animation: move 3s 0s infinite;
+    transform-origin: bottom;
+    -webkit-transform-origin: bottom;
+}
+
+.menu-icon:hover{
+    background-color: rgba(0,0,0,0.05);
+}
 </style>

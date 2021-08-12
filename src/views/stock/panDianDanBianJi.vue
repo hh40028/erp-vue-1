@@ -58,10 +58,12 @@
                 </table>
             </div>
             <div class="text-center">
-                <button class="btn btn-default m-r-10" @click="loadCommodity">选择商品</button>
-                <button class="btn btn-default m-r-10" @click="save(false)">暂存</button>
-                <button class="btn btn-default" @click="save(true)">提交变更</button>
-                <button class="btn btn-default" @click="deleteObj">删除</button>
+                <div class="btn-group">
+                    <button class="btn btn-default" @click="loadCommodity">选择商品</button>
+                    <button class="btn btn-default" @click="save(false)">暂存</button>
+                    <button class="btn btn-default" @click="save(true)">提交变更</button>
+                    <button class="btn btn-default" @click="deleteObj">删除</button>
+                </div>
             </div>
         </div>
         <selectCommodity ref="selectCommodity" @selectCommodity="addCommodity"></selectCommodity>

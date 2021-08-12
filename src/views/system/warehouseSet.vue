@@ -11,7 +11,7 @@
                         <button class="btn btn-default" :disabled="!warehouse.id" @click="edit">编辑</button>
                         <button class="btn btn-default" :disabled="!warehouse.id" @click="location">货位设置</button>
                     </div>
-               </div>
+                </div>
                 <table class="table table-bordered">
                     <thead>
                     <tr>
@@ -25,14 +25,14 @@
                     </thead>
                     <tbody>
                     <tr v-for="(w,index) in warehouses" :key="w.id" @click="selectObj(w)" :class="{'bg-success':w.id===warehouse.id}">
-                        <td class="text-center">{{index+1}}</td>
+                        <td class="text-center">{{ index + 1 }}</td>
                         <td class="text-center">
                             <input type="checkbox" v-model="w.status" @change="changeStatus(w)">
                         </td>
-                        <td class="text-center">{{w.name}}</td>
-                        <td class="text-center">{{w.address}}</td>
-                        <td class="text-center">{{w.managername}}</td>
-                        <td class="text-center">{{!w.checking?"":"盘点中"}}</td>
+                        <td class="text-center">{{ w.name }}</td>
+                        <td class="text-center">{{ w.address }}</td>
+                        <td class="text-center">{{ w.managername }}</td>
+                        <td class="text-center">{{ !w.checking ? "" : "盘点中" }}</td>
                     </tr>
                     </tbody>
                 </table>
@@ -57,7 +57,7 @@
                         <div class="form-group">
                             <label>负责人</label>
                             <select v-model="warehouse.manager" class="form-control">
-                                <option v-for="u in users" :key="u.id" :value="u.id">{{u.username}}</option>
+                                <option v-for="u in users" :key="u.id" :value="u.id">{{ u.username }}</option>
                             </select>
                         </div>
                     </div>
@@ -76,9 +76,9 @@ export default {
     name: "app",
     data() {
         return {
-            warehouses:[],
-            warehouse:{},
-            users:[]
+            warehouses: [],
+            warehouse: {},
+            users: []
         }
     },
     created: function () {
@@ -86,41 +86,41 @@ export default {
         this.load();
     },
     methods: {
-        loadUsers(){
+        loadUsers() {
             let vm = this;
             this.$root.getData("api/getUserList", {}, function (data) {
-                vm.users=data;
+                vm.users = data;
             })
         },
         load: function () {
             let vm = this;
             this.$root.getData("warehouse/getList", {}, function (data) {
-                vm.warehouses=data;
+                vm.warehouses = data;
             })
         },
-        changeStatus(obj){
-            this.warehouse=this.$root.clone(obj);
+        changeStatus(obj) {
+            this.warehouse = this.$root.clone(obj);
             this.save();
         },
-        add(){
-            this.warehouse={};
+        add() {
+            this.warehouse = {};
             $('#editModal').modal('show');
         },
-        edit(){
+        edit() {
             $('#editModal').modal('show');
         },
-        selectObj(obj){
-            this.warehouse=this.$root.clone(obj);
+        selectObj(obj) {
+            this.warehouse = this.$root.clone(obj);
         },
-        save(){
+        save() {
             let vm = this;
             this.$root.getData("warehouse/save", this.warehouse, function (data) {
                 $('#editModal').modal('hide');
                 vm.load();
             })
         },
-        location(){
-            sessionStorage.warehouseObj=JSON.stringify(this.warehouse);
+        location() {
+            sessionStorage.warehouseObj = JSON.stringify(this.warehouse);
             this.$router.push('cargolocation');
         }
     }

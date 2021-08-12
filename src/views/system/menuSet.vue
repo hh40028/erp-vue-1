@@ -15,6 +15,8 @@
                         <th class="text-center" style="width: 50px">序号</th>
                         <th class="text-center">名称</th>
                         <th class="text-center">地址</th>
+                        <th class="text-center">图标</th>
+                        <th class="text-center" style="width: 100px">排序</th>
                         <th class="text-center" style="width: 100px">编辑</th>
                     </tr>
                     </thead>
@@ -26,6 +28,13 @@
                         </td>
                         <td class="text-center">
                             <input type="text" v-model="menu.url" class="form-control">
+                        </td>
+                        <td class="text-center">
+                            <input type="text" v-model="menu.icon" class="form-control">
+                        </td>
+                        <td class="text-center" style="width: 100px">
+                            <a class="c-blue m-r-5" @click="up(index)" v-if="index>0">上移</a>
+                            <a class="c-blue" @click="down(index)" v-if="index<list.length-1">下移</a>
                         </td>
                         <td class="text-center" style="width: 50px">
                             <a class="c-blue m-r-5" @click="saveMenu(menu)">保存</a>
@@ -42,7 +51,10 @@
                         <td class="text-center">
                             <input type="text" v-model="menu.url" class="form-control">
                         </td>
-                        <td class="text-center" style="width: 50px"><a class="c-blue" @click="saveNewMenu">新增</a></td>
+                        <td class="text-center">
+                            <input type="text" v-model="menu.icon" class="form-control">
+                        </td>
+                        <td class="text-center" style="width: 50px" colspan="2"><a class="c-blue" @click="saveNewMenu">新增</a></td>
                     </tr>
                     </tfoot>
                 </table>
@@ -111,6 +123,22 @@ export default {
                 vm.$root.getData("menu/delete", {id: menu.id}, function (data) {
                     vm.loadList();
                 })
+            })
+        },
+        up(index){
+            if(index>0)
+            this.list[index] = this.list.splice(index-1, 1, this.list[index])[0];
+            this.changeSort();
+        },
+        down(index){
+            if(index<this.list.length-1)
+            this.list[index] = this.list.splice(index+1, 1, this.list[index])[0];
+            this.changeSort();
+        },
+        changeSort(){
+            let vm = this;
+            this.$root.getData("menu/changeSort", {rows:JSON.stringify(this.list)}, function (data) {
+
             })
         }
     }
