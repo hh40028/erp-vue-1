@@ -46,13 +46,13 @@
             </div>
         </div>
         <div class="modal fade" id="menuModal" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-lg" style="width: 80%">
+            <div class="modal-dialog modal-lg">
                 <div class="modal-content" style="background-color: #fff">
                     <div class="modal-body menu-modal">
-                        <div class="row p-15">
+                        <div class="row p-t-15">
                             <div class="pull-right">
                                 <a href="">
-                                    <img src="./assets/images/icons8-delete_sign.png" data-dismiss="modal" class="w30">
+                                    <img src="./assets/images/icons8-delete_sign.png" data-dismiss="modal" class="w20 m-r-15">
                                 </a>
                             </div>
                             <div class="col-md-4 col-md-offset-4 col-sm-8 col-sm-offset-2 col-xs-10 col-xs-offset-1 text-center">
