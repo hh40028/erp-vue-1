@@ -102,7 +102,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="(o,index) in list" :key="o.id">
+                    <tr v-for="(o,index) in obj.children" :key="o.id">
                       <td class="text-center w50">{{ index + 1 }}</td>
                       <td class="text-center">{{ o.productid }}</td>
                       <td class="text-center">{{ o.name }}</td>
@@ -145,21 +145,29 @@ import selectOrganization from '@/components/selectOrganization.vue';
 import selectDict from '@/components/selectDict.vue';
 
 export default {
+    props:['id'],
     name: "app",
     data() {
         return {
-            obj: {},
-            list: []
+            obj: {
+                children:[]
+            }
         }
     },
     created: function () {
-        this.load();
+        if(this.id){
+            this.load();
+        }
     },
     components: {
         selectCustomer, selectUser,selectOrganization,selectCommodity,selectDict
     },
     methods: {
         load: function () {
+            let vm = this;
+            this.$root.getData("contract/getMap", {id:this.id}, function (data) {
+                vm.obj=data;
+            })
         },
         selectCustomer(obj) {
             this.$set(this.obj, 'customername', obj.name);
@@ -171,7 +179,7 @@ export default {
         selectCommodity(obj) {
             console.log(obj);
             let flag=false;
-            this.list.forEach(function (e){
+            this.obj.children.forEach(function (e){
               if(e.productid===obj.number){
                 flag=true;
               }
@@ -186,7 +194,7 @@ export default {
                 price:obj.saleprice,
                 count:1,
               }
-              this.list.push(c);
+              this.obj.children.push(c);
             }else{
               this.$root.alert("已选商品");
             }
@@ -204,14 +212,14 @@ export default {
           this.$set(this.obj,'depid',obj.id);
         },
         removeItem(index) {
-            this.list.splice(index, 1);
+            this.obj.children.splice(index, 1);
         },
         save() {
             let vm = this;
             this.$root.confirm('确认吗?',function (){
                 vm.$root.getData("contract/save", {
                     obj: JSON.stringify(vm.obj),
-                    rows: JSON.stringify(vm.list)
+                    rows: JSON.stringify(vm.obj.children)
                 }, function (data) {
                     sessionStorage.contractId = data.id;
                     vm.$router.push('hetongmingxi');

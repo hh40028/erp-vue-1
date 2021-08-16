@@ -40,6 +40,12 @@ import inboundOrderRejected from '../views/process/inboundOrderRejected.vue';
 import xiaoShouDan from '../views/sale/xiaoShouDan.vue';
 import xiaoShouDanBanJi from '../views/sale/xiaoShouDanBanJi.vue';
 import xiaoShouDanMingXi from '../views/sale/xiaoShouDanMingXi.vue';
+import hetong from '../views/hetong/hetong.vue';
+import hetongmingxi from '../views/hetong/hetongmingxi.vue';
+import heTongShenPi from '../views/process/heTongShenPi.vue';
+import chongXinBianJi from '../views/process/chongXinBianJi.vue';
+import saleorder from '../views/saleorder/saleorder.vue';
+import saleorderView from '../views/saleorder/saleorderView.vue';
 
 
 Vue.use(VueRouter);
@@ -86,6 +92,12 @@ const routes = [
     {path: '/xiaoShouDan', name: 'xiaoShouDan', component: xiaoShouDan},
     {path: '/xiaoShouDanBanJi', name: 'xiaoShouDanBanJi', component: xiaoShouDanBanJi},
     {path: '/xiaoShouDanMingXi', name: 'xiaoShouDanMingXi', component: xiaoShouDanMingXi},
+    {path: '/hetong', name: 'hetong', component: hetong},
+    {path: '/hetongmingxi', name: 'hetongmingxi', component: hetongmingxi},
+    {path: '/heTongShenPi', name: 'heTongShenPi', component: heTongShenPi},
+    {path: '/chongXinBianJi', name: 'chongXinBianJi', component: chongXinBianJi},
+    {path: '/saleorder', name: 'saleorder', component: saleorder},
+    {path: '/saleorderView', name: 'saleorderView', component: saleorderView},
 ];
 
 const router = new VueRouter({

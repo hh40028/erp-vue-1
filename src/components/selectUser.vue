@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-md-12">
-            <input type="text" class="form-control" v-model="getName" @click="load" readonly>
+            <input type="text" v-if="!showInput" class="form-control" v-model="getName" @click="load" readonly>
             <div class="modal fade" id="selectUserModal" tabindex="-1" role="dialog" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -51,7 +51,7 @@
 <script>
 import page from '@/components/page.vue';
 export default {
-    props:['name'],
+    props:['name','showInput'],
     name: "app",
     data() {
         return {
