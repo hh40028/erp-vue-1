@@ -27,53 +27,46 @@
                     </tbody>
                 </table>
             </div>
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">子商品列表</h3>
+            <div class="row">
+                <div class="col-md-3">
+                    <div id="tree"></div>
                 </div>
-                <div class="panel-body">
-                    <div class="btn-group">
-                        <button class="btn btn-default" @click="addCommodity">选择</button>
-                        <button class="btn btn-default" @click="deleteCommodity">删除</button>
-                    </div>
+                <div class="col-md-9">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">{{node.text}} - 下级商品列表</h3>
+                        </div>
+                            <table class="table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th class="text-center w50">序号</th>
+                                    <th class="text-center">名称</th>
+                                    <th class="text-center">编号</th>
+                                    <th class="text-center">规格</th>
+                                    <th class="text-center">型号</th>
+                                    <th class="text-center w100">数量</th>
+                                    <th class="text-center w50"><a class="c-blue" @click="addCommodity">新增</a></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-for="(o,index) in list" :key="obj.id">
+                                    <td class="text-center w50">{{ index + 1 }}</td>
+                                    <td class="text-center">{{o.name}}</td>
+                                    <td class="text-center">{{o.number}}</td>
+                                    <td class="text-center">{{o.norm}}</td>
+                                    <td class="text-center">{{o.model}}</td>
+                                    <td class="text-center w100">
+                                        <input type="number" v-model="o.commoditycount" class="w-100">
+                                    </td>
+                                    <td class="text-center w50"><a class="c-red" @click="removeObj(index)">移除</a></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                    </div>  <div class="text-center">
+                    <button class="btn btn-default" @click="saveList">保存</button>
+                    <button class="btn btn-default" onclick="history.back()">返回</button>
                 </div>
-                <table class="table table-bordered">
-                    <thead>
-                    <tr>
-                        <th class="text-center w50">序号</th>
-                        <th class="text-center">数量</th>
-                        <th class="text-center">商品编号</th>
-                        <th class="text-center">商品名称</th>
-                        <th class="text-center">类别</th>
-                        <th class="text-center">计量单位</th>
-                        <th class="text-center">采购单价</th>
-                        <th class="text-center">销售单价</th>
-                        <th class="text-center">颜色</th>
-                        <th class="text-center">用途</th>
-                        <th class="text-center">规格</th>
-                        <th class="text-center">型号</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr v-for="(c,index) in list" :key="c.id" @click="selectChild(c)" :class="{'bg-success':c.id===child.id}">
-                        <td class="text-center">{{index+1}}</td>
-                        <td class="text-center">{{c.commoditycount}}</td>
-                        <td class="text-center">{{c.number}}</td>
-                        <td class="text-center">{{c.name}}</td>
-                        <td class="text-center">{{c.typename}}</td>
-                        <td class="text-center">{{c.unit}}</td>
-                        <td class="text-center">{{c.purchaseprice|number2}}</td>
-                        <td class="text-center">{{c.saleprice|number2}}</td>
-                        <td class="text-center">{{c.color}}</td>
-                        <td class="text-center">{{c.use}}</td>
-                        <td class="text-center">{{c.norm}}</td>
-                        <td class="text-center">{{c.model}}</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="text-center">
-                <button class="btn btn-default" onclick="history.back()">返回</button>
+                </div>
             </div>
         </div>
         <div class="modal fade" id="setCountModal" tabindex="-1" role="dialog" aria-hidden="true">
@@ -96,11 +89,13 @@
                 </div>
             </div>
         </div>
-        <selectCommodity ref="selectCommodity" @selectCommodity="selectCommodity"></selectCommodity>
+        <selectCommodity ref="selectCommodity" single="false" @selectCommodity="selectCommodity"></selectCommodity>
     </div>
 </template>
 
 <script>
+
+import '../../assets/js/bootstrap-treeview';
 import selectCommodity from '@/components/selectCommodity.vue';
 export default {
     name: "app",
@@ -108,19 +103,47 @@ export default {
         return {
             obj:{},
             list:[],
-            child:{}
+            child:{},
+            tree:[],
+            node:{}
         }
     },
     created: function () {
         if(sessionStorage.productObj){
             this.obj=JSON.parse(sessionStorage.productObj);
-            this.load();
+            this.loadTree();
         }
     },
     components: {
         selectCommodity
     },
     methods: {
+        loadTree(){
+            let vm = this;
+            this.$root.getData("productstructure/getTree", {id:this.obj.id}, function (data) {
+                vm.tree=data;
+                $('#tree').treeview({
+                    color: "#000000",
+                    levels: 3,
+                    data: data,
+                    onNodeSelected: function (event, node) {
+                        vm.node=node;
+                        vm.loadList(node.id);
+                    }
+                });
+                if(data.length>0){
+                    $('#tree').treeview('selectNode', [0, {silent: true}]);
+                    vm.node = vm.tree[0];
+                    vm.loadList(vm.node.id);
+                }
+            })
+        },
+        loadList(pid){
+            let vm = this;
+            this.$root.getData("productstructure/getListByPid", {pid:pid}, function (data) {
+                vm.list=data;
+            })
+        },
         load: function () {
             let vm = this;
             this.$root.getData("productstructurechild/getList", {pid:this.obj.id}, function (data) {
@@ -135,7 +158,7 @@ export default {
             if(!this.child.commoditycount){
                 this.$root.alert('必须大于0');
             }else{
-                this.$root.getData("productstructurechild/save", this.child, function (data) {
+                this.$root.getData("productstructure/save", this.child, function (data) {
                     $('#setCountModal').modal('hide');
                     vm.child={};
                     vm.load();
@@ -146,24 +169,33 @@ export default {
             if(obj.id===this.obj.commodityid){
                 this.$root.alert('不可选择主商品');
             }else{
-                this.child={
-                    commodityid:obj.id,
-                    pid:this.obj.id,
-                    commoditycount:1
-                }
-                $('#setCountModal').modal('show');
+                obj.commodityid=obj.id;
+                obj.commoditycount=1;
+                obj.pid=this.node.id;
+                obj.id=null;
+
+                this.list.push(obj);
             }
         },
-        deleteCommodity(obj){
-            let vm = this;
-            this.$root.confirm('确认吗?',function (){
-                vm.$root.getData("productstructurechild/delete", {id:vm.child.id}, function (data) {
-                    vm.load();
+        removeObj(index){
+            let obj=this.list[index];
+            if(obj.id){
+                let vm = this;
+                this.$root.confirm('确认吗?',function (){
+                    vm.$root.getData("productstructure/delete", {id:obj.id}, function (data) {
+                        vm.loadTree();
+                    })
                 })
-            })
+            }
+            this.list.splice(index,1);
         },
-        selectChild(obj){
-            this.child=obj;
+        saveList(){
+            let vm = this;
+            this.$root.getData("productstructure/saveList", {rows:JSON.stringify(this.list)}, function (data) {
+                vm.$root.msg('操作成功');
+
+                vm.loadTree();
+            })
         }
     }
 }
