@@ -82,7 +82,7 @@
                 </div>
             </div>
         </div>
-        <selectCommodity ref="selectCommodity" @selectCommodity="selectCommodity"></selectCommodity>
+        <selectCommodity ref="selectCommodity" single="true" @selectCommodity="selectCommodity"></selectCommodity>
     </div>
 </template>
 

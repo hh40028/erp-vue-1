@@ -89,7 +89,7 @@
                 </div>
             </div>
         </div>
-        <selectCommodity ref="selectCommodity" single="false" @selectCommodity="selectCommodity"></selectCommodity>
+        <selectCommodity ref="selectCommodity" @selectCommodity="selectCommodity"></selectCommodity>
     </div>
 </template>
 
@@ -166,7 +166,16 @@ export default {
             }
         },
         selectCommodity(obj){
-            if(obj.id===this.obj.commodityid){
+            let flag=false;
+            this.list.forEach(function (e){
+                if(e.commodityid===obj.id){
+                    flag=true;
+                }
+            })
+            if(flag){
+                this.$root.alert('已选商品');
+            }
+            else if(obj.id===this.obj.commodityid){
                 this.$root.alert('不可选择主商品');
             }else{
                 obj.commodityid=obj.id;
